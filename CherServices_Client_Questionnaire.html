@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CherServices.com — Client Discovery Questionnaire</title>
+<style>
+  :root{
+    --navy:#1F3864;
+    --navy-dark:#152a4a;
+    --gold:#C99A3C;
+    --grey:#595959;
+    --light:#F5F6F8;
+    --border:#E1E4E9;
+    --green:#2E7D32;
+    --red:#B3261E;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:var(--light);
+    color:#222;
+    padding-bottom:90px;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:32px 20px 40px;}
+  header.top{
+    background:var(--navy);
+    color:#fff;
+    padding:28px 24px;
+    border-radius:10px;
+    margin-bottom:8px;
+  }
+  header.top h1{margin:0 0 4px;font-size:24px;}
+  header.top .sub{color:var(--gold);font-weight:600;font-size:15px;}
+  header.top .meta{margin-top:14px;font-size:13px;color:#d7dfec;line-height:1.6;}
+  header.top .meta b{color:#fff;}
+
+  .save-note{
+    background:#EAF3EA;
+    border:1px solid #BFDDBF;
+    color:#245A24;
+    font-size:12.5px;
+    padding:10px 14px;
+    border-radius:8px;
+    margin:14px 0 24px;
+    line-height:1.5;
+  }
+
+  .section{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:22px 22px 8px;
+    margin-bottom:20px;
+  }
+  .section h2{
+    font-size:16px;
+    color:var(--navy);
+    margin:0 0 14px;
+    padding-bottom:10px;
+    border-bottom:2px solid var(--gold);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .section h2 .num{
+    background:var(--gold);
+    color:#fff;
+    width:22px;height:22px;
+    border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:700;
+  }
+  .q{margin-bottom:18px;}
+  .q label.qlabel{
+    display:block;
+    font-size:14px;
+    font-weight:600;
+    color:#222;
+    margin-bottom:8px;
+  }
+  .hint{font-size:12px;color:var(--grey);margin:-4px 0 8px;font-style:italic;}
+
+  input[type=text], input[type=tel], textarea{
+    width:100%;
+    padding:9px 11px;
+    border:1px solid var(--border);
+    border-radius:7px;
+    font-size:14px;
+    font-family:inherit;
+    background:#fcfcfd;
+  }
+  textarea{min-height:64px;resize:vertical;}
+  input[type=text]:focus, textarea:focus, input[type=tel]:focus{
+    outline:none;border-color:var(--navy);background:#fff;
+  }
+
+  .radio-group{display:flex;flex-direction:column;gap:8px;}
+  .radio-option{
+    display:flex;align-items:center;gap:8px;
+    font-size:14px;
+    border:1px solid var(--border);
+    padding:9px 12px;border-radius:7px;
+    cursor:pointer;
+  }
+  .radio-option:hover{border-color:var(--navy);}
+  .radio-option input{accent-color:var(--navy);width:16px;height:16px;}
+  .inline-input{margin-top:6px;}
+
+  table.model-table{width:100%;border-collapse:collapse;margin-bottom:6px;}
+  table.model-table th{
+    text-align:left;font-size:12px;color:var(--grey);
+    padding:6px 8px;border-bottom:1px solid var(--border);
+  }
+  table.model-table td{
+    padding:8px;vertical-align:top;border-bottom:1px solid var(--border);
+  }
+  table.model-table td.cat{
+    font-weight:600;font-size:13.5px;color:var(--navy);width:120px;
+  }
+  .file-cell{display:flex;flex-direction:column;gap:6px;}
+  .file-btn{
+    display:inline-block;
+    font-size:12.5px;
+    padding:6px 10px;
+    background:var(--navy);
+    color:#fff;
+    border-radius:6px;
+    cursor:pointer;
+    border:none;
+    width:fit-content;
+  }
+  .file-btn:hover{background:var(--navy-dark);}
+  input[type=file]{display:none;}
+
+  .thumbs{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+  .thumb{position:relative;width:52px;height:52px;border-radius:6px;overflow:hidden;border:1px solid var(--border);}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .thumb.file-icon{display:flex;align-items:center;justify-content:center;background:#eef1f5;font-size:10px;color:var(--grey);text-align:center;padding:2px;}
+  .thumb .rm{
+    position:absolute;top:0;right:0;background:rgba(0,0,0,.6);color:#fff;
+    width:16px;height:16px;font-size:11px;line-height:16px;text-align:center;cursor:pointer;
+  }
+
+  .footer-bar{
+    position:fixed;bottom:0;left:0;right:0;
+    background:#fff;border-top:1px solid var(--border);
+    padding:12px 20px;
+    display:flex;align-items:center;justify-content:space-between;
+    gap:12px;
+    box-shadow:0 -2px 10px rgba(0,0,0,0.05);
+    z-index:10;
+  }
+  .footer-bar .status{font-size:12px;color:var(--grey);}
+  .footer-bar .status.completed{color:var(--green);font-weight:600;}
+  .btn-group{display:flex;gap:8px;}
+  button.action{
+    padding:10px 16px;border-radius:7px;border:none;font-size:13.5px;font-weight:600;cursor:pointer;
+  }
+  button.primary{background:var(--navy);color:#fff;}
+  button.primary:hover{background:var(--navy-dark);}
+  button.secondary{background:#fff;border:1px solid var(--border);color:#333;}
+  button.secondary:hover{border-color:var(--red);color:var(--red);}
+
+  .banner-done{
+    display:none;
+    background:#EAF3EA;border:1px solid #BFDDBF;color:#245A24;
+    padding:12px 16px;border-radius:8px;font-size:13.5px;margin-bottom:20px;
+  }
+  @media (max-width:600px){
+    table.model-table, table.model-table thead, table.model-table tbody, table.model-table th, table.model-table td, table.model-table tr{display:block;}
+    table.model-table td.cat{width:auto;}
+    .footer-bar{flex-direction:column;align-items:stretch;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <h1>Client Discovery Questionnaire</h1>
+    <div class="sub">CherServices.com</div>
+    <div class="meta">
+      <b>Client:</b> Kenny Reid &nbsp;·&nbsp; <b>Prepared by:</b> LisDev
+    </div>
+  </header>
+
+  <div class="save-note">
+    ✓ Your answers autosave in this browser as you type. They will remain even if your internet connection drops or the page is closed — no data is sent anywhere, it's stored locally on this device for as long as you don't clear browser data (well beyond 24 hours).
+  </div>
+
+  <div class="banner-done" id="doneBanner"></div>
+
+  <form id="qForm">
+
+    <!-- 1. Brand Identity -->
+    <div class="section">
+      <h2><span class="num">1</span> Brand Identity</h2>
+      <div class="q">
+        <label class="qlabel">Do you have the logo in an editable format, or only as a PNG/JPG?</label>
+        <div class="radio-group">
+          <label class="radio-option"><input type="radio" name="logoFormat" value="editable"> Editable format (AI, EPS, PSD, SVG...)</label>
+          <label class="radio-option"><input type="radio" name="logoFormat" value="raster"> Only PNG / JPG</label>
+          <label class="radio-option"><input type="radio" name="logoFormat" value="none"> No logo yet — need one designed</label>
+        </div>
+        <div class="q inline-input">
+          <label class="qlabel">Upload logo file(s) (if available)</label>
+          <div class="file-cell">
+            <label class="file-btn">Choose file(s)<input type="file" accept="image/*,.ai,.eps,.psd,.svg,.pdf" multiple data-key="logo"></label>
+            <div class="thumbs" data-thumbs="logo"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Rental Equipment Catalog -->
+    <div class="section">
+      <h2><span class="num">2</span> Rental Equipment Catalog</h2>
+      <div class="q">
+        <label class="qlabel">We know the fleet includes Caterpillar loaders, dozers, backhoe loaders, skid steers and excavators. Please provide the specific model(s) for each, and upload photos or spec sheets to start building the equipment inventory.</label>
+        <table class="model-table">
+          <thead><tr><th>Category</th><th>Model(s)</th><th>Photos / files</th></tr></thead>
+          <tbody id="equipmentRows"></tbody>
+        </table>
+      </div>
+
+      <div class="q">
+        <label class="qlabel">Should machinery rental have pre-set prices, so the client gets an instant prequote in minutes — or should we show an estimated waiting time and send the quote by email?</label>
+        <div class="radio-group">
+          <label class="radio-option"><input type="radio" name="pricingOption" value="prequote"> Pre-set prices — instant prequote in minutes</label>
+          <label class="radio-option"><input type="radio" name="pricingOption" value="email"> Estimated timeframe + quote sent by email</label>
+          <label class="radio-option"><input type="radio" name="pricingOption" value="combo"> A mix of both (please specify below)</label>
+        </div>
+        <textarea name="pricingComboDetail" placeholder="Details if a mix, or any pricing notes..."></textarea>
+      </div>
+
+      <div class="q">
+        <label class="qlabel">Should we build a database of service/rental requests?</label>
+        <div class="radio-group">
+          <label class="radio-option"><input type="radio" name="serviceDb" value="yes"> Yes</label>
+          <label class="radio-option"><input type="radio" name="serviceDb" value="no"> No</label>
+        </div>
+        <textarea name="serviceDbComments" placeholder="Additional comments..."></textarea>
+      </div>
+    </div>
+
+    <!-- 3. Parts Catalog -->
+    <div class="section">
+      <h2><span class="num">3</span> Parts Catalog</h2>
+      <div class="q">
+        <label class="qlabel">Would you be able to create and manage your own parts inventory with photos?</label>
+        <div class="radio-group">
+          <label class="radio-option"><input type="radio" name="partsManage" value="self"> Yes, we will upload and manage the parts inventory ourselves</label>
+          <label class="radio-option"><input type="radio" name="partsManage" value="lisdev"> No, we'd prefer LisDev to manage the catalog</label>
+          <label class="radio-option"><input type="radio" name="partsManage" value="training"> We'd need training on how to do it</label>
+        </div>
+      </div>
+      <div class="q">
+        <label class="qlabel">Upload sample part photos or files to start building the parts inventory (optional)</label>
+        <div class="file-cell">
+          <label class="file-btn">Choose file(s)<input type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" multiple data-key="parts"></label>
+          <div class="thumbs" data-thumbs="parts"></div>
+        </div>
+      </div>
+      <div class="q">
+        <label class="qlabel">Additional comments</label>
+        <textarea name="partsComments"></textarea>
+      </div>
+    </div>
+
+    <!-- 4. Repair Service Process -->
+    <div class="section">
+      <h2><span class="num">4</span> Repair Service Process</h2>
+      <div class="q">
+        <label class="qlabel">How should repair requests work: submitted online and your team calls the client back, or should we show your WhatsApp contact directly?</label>
+        <div class="radio-group">
+          <label class="radio-option"><input type="radio" name="repairProcess" value="onlineCall"> Online request + call back from CherServices team</label>
+          <label class="radio-option"><input type="radio" name="repairProcess" value="whatsapp"> Direct WhatsApp contact</label>
+          <label class="radio-option"><input type="radio" name="repairProcess" value="both"> Both options available to the client</label>
+        </div>
+      </div>
+      <div class="q">
+        <label class="qlabel">WhatsApp number / contact to display (if applicable)</label>
+        <input type="tel" name="whatsappNumber" placeholder="+1 (___) ___-____">
+      </div>
+    </div>
+
+    <!-- 5. Location & Coverage -->
+    <div class="section">
+      <h2><span class="num">5</span> Location & Service Coverage</h2>
+      <div class="q">
+        <label class="qlabel">Exact office address</label>
+        <textarea name="officeAddress"></textarea>
+      </div>
+      <div class="q">
+        <label class="qlabel">Service coverage areas / cities / regions</label>
+        <textarea name="coverageAreas"></textarea>
+      </div>
+    </div>
+
+    <!-- 6. Company History -->
+    <div class="section">
+      <h2><span class="num">6</span> Company History</h2>
+      <div class="q">
+        <label class="qlabel">Since when has the company been operating?</label>
+        <input type="text" name="sinceWhen">
+      </div>
+      <div class="q">
+        <label class="qlabel">Experience and expertise</label>
+        <textarea name="expertise"></textarea>
+      </div>
+      <div class="q">
+        <label class="qlabel">Other details for the "About Us" section (mission, values, certifications, notable clients, etc.)</label>
+        <textarea name="aboutUs"></textarea>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<div class="footer-bar">
+  <div class="status" id="statusText">No draft saved yet</div>
+  <div class="btn-group">
+    <button type="button" class="action secondary" id="resetBtn">Clear All</button>
+    <button type="button" class="action primary" id="finishBtn">Save &amp; Finish (Download Summary)</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'cherservices_kennyreid_questionnaire_v1';
+  const form = document.getElementById('qForm');
+  const statusText = document.getElementById('statusText');
+  const doneBanner = document.getElementById('doneBanner');
+
+  const EQUIPMENT_CATEGORIES = [
+    {key:'loaders', label:'Loaders'},
+    {key:'dozers', label:'Dozers'},
+    {key:'backhoe', label:'Backhoe Loaders'},
+    {key:'skidsteer', label:'Skid Steers'},
+    {key:'excavators', label:'Excavators'},
+    {key:'other', label:'Other'}
+  ];
+
+  // Build equipment table rows dynamically
+  const eqRowsEl = document.getElementById('equipmentRows');
+  EQUIPMENT_CATEGORIES.forEach(cat=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="cat">${cat.label}</td>
+      <td><input type="text" name="model_${cat.key}" placeholder="Model(s)..."></td>
+      <td class="file-cell">
+        <label class="file-btn">Choose file(s)<input type="file" accept="image/*,.pdf" multiple data-key="eq_${cat.key}"></label>
+        <div class="thumbs" data-thumbs="eq_${cat.key}"></div>
+      </td>
+    `;
+    eqRowsEl.appendChild(tr);
+  });
+
+  function loadState(){
+    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {fields:{}, files:{}}; }
+    catch(e){ return {fields:{}, files:{}}; }
+  }
+  function persist(state){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    renderStatus(state);
+  }
+  function renderStatus(state){
+    if(state.completed){
+      statusText.textContent = 'Completed on ' + new Date(state.completedAt).toLocaleString();
+      statusText.classList.add('completed');
+      doneBanner.style.display='block';
+      doneBanner.textContent = '✓ This questionnaire was marked complete on ' + new Date(state.completedAt).toLocaleString() + '. A summary file was downloaded to your computer. You can keep editing — it will re-save as a draft.';
+    } else if(state.lastSaved){
+      statusText.textContent = 'Draft autosaved · last saved ' + new Date(state.lastSaved).toLocaleTimeString();
+      statusText.classList.remove('completed');
+    } else {
+      statusText.textContent = 'No draft saved yet';
+    }
+  }
+
+  function currentState(){
+    return loadState();
+  }
+
+  function saveField(name, value){
+    const state = currentState();
+    state.fields = state.fields || {};
+    state.fields[name] = value;
+    state.lastSaved = new Date().toISOString();
+    persist(state);
+  }
+
+  function restoreFields(){
+    const state = currentState();
+    const fields = state.fields || {};
+    Object.keys(fields).forEach(name=>{
+      const els = form.querySelectorAll(`[name="${CSS.escape(name)}"]`);
+      els.forEach(el=>{
+        if(el.type === 'radio'){ el.checked = (el.value === fields[name]); }
+        else { el.value = fields[name]; }
+      });
+    });
+    renderStatus(state);
+    // restore file thumbnails
+    Object.keys(state.files || {}).forEach(key=>{
+      renderThumbs(key, state.files[key] || []);
+    });
+  }
+
+  // text/textarea inputs
+  form.querySelectorAll('input[type=text], input[type=tel], textarea').forEach(el=>{
+    el.addEventListener('input', ()=> saveField(el.name, el.value));
+  });
+  // radio inputs
+  form.addEventListener('change', (e)=>{
+    if(e.target.type === 'radio'){ saveField(e.target.name, e.target.value); }
+  });
+
+  // file inputs
+  function renderThumbs(key, items){
+    const container = document.querySelector(`[data-thumbs="${CSS.escape(key)}"]`);
+    if(!container) return;
+    container.innerHTML = '';
+    items.forEach((item, idx)=>{
+      const div = document.createElement('div');
+      div.className = 'thumb' + (item.isImage ? '' : ' file-icon');
+      if(item.isImage){
+        div.innerHTML = `<img src="${item.dataUrl}" alt="${item.name}">`;
+      } else {
+        div.textContent = item.name.length > 14 ? item.name.slice(0,12)+'…' : item.name;
+      }
+      const rm = document.createElement('div');
+      rm.className = 'rm';
+      rm.textContent = '✕';
+      rm.title = 'Remove';
+      rm.addEventListener('click', ()=>{
+        const state = currentState();
+        state.files[key].splice(idx,1);
+        state.lastSaved = new Date().toISOString();
+        persist(state);
+        renderThumbs(key, state.files[key]);
+      });
+      div.appendChild(rm);
+      container.appendChild(div);
+    });
+  }
+
+  document.querySelectorAll('input[type=file]').forEach(input=>{
+    input.addEventListener('change', (e)=>{
+      const key = input.getAttribute('data-key');
+      const files = Array.from(e.target.files || []);
+      if(files.length === 0) return;
+      const state = currentState();
+      state.files = state.files || {};
+      state.files[key] = state.files[key] || [];
+      let pending = files.length;
+      files.forEach(file=>{
+        const reader = new FileReader();
+        reader.onload = function(ev){
+          state.files[key].push({
+            name: file.name,
+            dataUrl: ev.target.result,
+            isImage: file.type.startsWith('image/')
+          });
+          pending--;
+          if(pending === 0){
+            state.lastSaved = new Date().toISOString();
+            persist(state);
+            renderThumbs(key, state.files[key]);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+      input.value = ''; // allow re-selecting same file later
+    });
+  });
+
+  // Reset
+  document.getElementById('resetBtn').addEventListener('click', ()=>{
+    if(confirm('This will permanently clear all saved answers and uploaded files from this browser. Continue?')){
+      localStorage.removeItem(STORAGE_KEY);
+      form.reset();
+      document.querySelectorAll('.thumbs').forEach(t=> t.innerHTML='');
+      doneBanner.style.display='none';
+      statusText.textContent = 'No draft saved yet';
+      statusText.classList.remove('completed');
+    }
+  });
+
+  // Save & Finish -> mark complete + download summary HTML
+  document.getElementById('finishBtn').addEventListener('click', ()=>{
+    const state = currentState();
+    state.completed = true;
+    state.completedAt = new Date().toISOString();
+    state.lastSaved = state.completedAt;
+    persist(state);
+    downloadSummary(state);
+  });
+
+  function labelFor(name){
+    const map = {
+      logoFormat: 'Logo format',
+      pricingOption: 'Pricing model for machinery rental',
+      pricingComboDetail: 'Pricing notes',
+      serviceDb: 'Build a service/rental request database?',
+      serviceDbComments: 'Database comments',
+      partsManage: 'Parts inventory management',
+      partsComments: 'Parts comments',
+      repairProcess: 'Repair request process',
+      whatsappNumber: 'WhatsApp / contact number',
+      officeAddress: 'Office address',
+      coverageAreas: 'Coverage areas',
+      sinceWhen: 'Operating since',
+      expertise: 'Expertise',
+      aboutUs: 'About us notes'
+    };
+    if(map[name]) return map[name];
+    if(name.startsWith('model_')){
+      const cat = EQUIPMENT_CATEGORIES.find(c=>('model_'+c.key)===name);
+      return cat ? (cat.label + ' — model(s)') : name;
+    }
+    return name;
+  }
+
+  function valueLabel(name, value){
+    const options = {
+      logoFormat: {editable:'Editable format', raster:'PNG/JPG only', none:'No logo yet'},
+      pricingOption: {prequote:'Pre-set prices — instant prequote', email:'Estimated timeframe + email quote', combo:'Mix of both'},
+      serviceDb: {yes:'Yes', no:'No'},
+      partsManage: {self:'Client will self-manage', lisdev:'LisDev will manage', training:'Needs training'},
+      repairProcess: {onlineCall:'Online request + call back', whatsapp:'Direct WhatsApp', both:'Both options'}
+    };
+    if(options[name] && options[name][value]) return options[name][value];
+    return value || '(not answered)';
+  }
+
+  function downloadSummary(state){
+    const fields = state.fields || {};
+    const files = state.files || {};
+    const order = [
+      'logoFormat',
+      ...EQUIPMENT_CATEGORIES.map(c=>'model_'+c.key),
+      'pricingOption','pricingComboDetail','serviceDb','serviceDbComments',
+      'partsManage','partsComments',
+      'repairProcess','whatsappNumber',
+      'officeAddress','coverageAreas',
+      'sinceWhen','expertise','aboutUs'
+    ];
+    function fileGallery(key){
+      const items = files[key] || [];
+      if(items.length===0) return '<p style="color:#888;font-size:13px;">No files uploaded.</p>';
+      return '<div style="display:flex;flex-wrap:wrap;gap:8px;">' + items.map(it=>
+        it.isImage
+          ? `<img src="${it.dataUrl}" style="width:90px;height:90px;object-fit:cover;border-radius:6px;border:1px solid #ddd;" title="${it.name}">`
+          : `<a href="${it.dataUrl}" download="${it.name}" style="display:block;width:90px;height:90px;border:1px solid #ddd;border-radius:6px;font-size:11px;padding:6px;text-align:center;color:#1F3864;">${it.name}</a>`
+      ).join('') + '</div>';
+    }
+
+    let html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+      <title>CherServices.com — Questionnaire Answers (Kenny Reid)</title>
+      <style>
+        body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:800px;margin:40px auto;color:#222;padding:0 20px;}
+        h1{color:#1F3864;} h2{color:#1F3864;border-bottom:2px solid #C99A3C;padding-bottom:6px;margin-top:32px;}
+        .item{margin-bottom:14px;} .q{font-weight:600;font-size:14px;} .a{font-size:14px;color:#333;margin-top:2px;white-space:pre-wrap;}
+        .meta{color:#666;font-size:13px;margin-bottom:24px;}
+      </style></head><body>
+      <h1>CherServices.com — Questionnaire Answers</h1>
+      <div class="meta">Client: Kenny Reid &nbsp;·&nbsp; Prepared by: LisDev &nbsp;·&nbsp; Completed: ${new Date(state.completedAt).toLocaleString()}</div>`;
+
+    html += '<h2>1. Brand Identity</h2>';
+    html += `<div class="item"><div class="q">${labelFor('logoFormat')}</div><div class="a">${valueLabel('logoFormat', fields.logoFormat)}</div></div>`;
+    html += `<div class="item"><div class="q">Logo files</div>${fileGallery('logo')}</div>`;
+
+    html += '<h2>2. Rental Equipment Catalog</h2>';
+    EQUIPMENT_CATEGORIES.forEach(c=>{
+      html += `<div class="item"><div class="q">${c.label} — Model(s)</div><div class="a">${fields['model_'+c.key] || '(not answered)'}</div>${fileGallery('eq_'+c.key)}</div>`;
+    });
+    html += `<div class="item"><div class="q">${labelFor('pricingOption')}</div><div class="a">${valueLabel('pricingOption', fields.pricingOption)}</div></div>`;
+    html += `<div class="item"><div class="q">${labelFor('pricingComboDetail')}</div><div class="a">${fields.pricingComboDetail || '(none)'}</div></div>`;
+    html += `<div class="item"><div class="q">${labelFor('serviceDb')}</div><div class="a">${valueLabel('serviceDb', fields.serviceDb)}</div></div>`;
+    html += `<div class="item"><div class="q">${labelFor('serviceDbComments')}</div><div class="a">${fields.serviceDbComments || '(none)'}</div></div>`;
+
+    html += '<h2>3. Parts Catalog</h2>';
+    html += `<div class="item"><div class="q">${labelFor('partsManage')}</div><div class="a">${valueLabel('partsManage', fields.partsManage)}</div></div>`;
+    html += `<div class="item"><div class="q">Parts photos / files</div>${fileGallery('parts')}</div>`;
+    html += `<div class="item"><div class="q">${labelFor('partsComments')}</div><div class="a">${fields.partsComments || '(none)'}</div></div>`;
+
+    html += '<h2>4. Repair Service Process</h2>';
+    html += `<div class="item"><div class="q">${labelFor('repairProcess')}</div><div class="a">${valueLabel('repairProcess', fields.repairProcess)}</div></div>`;
+    html += `<div class="item"><div class="q">${labelFor('whatsappNumber')}</div><div class="a">${fields.whatsappNumber || '(none)'}</div></div>`;
+
+    html += '<h2>5. Location &amp; Service Coverage</h2>';
+    html += `<div class="item"><div class="q">${labelFor('officeAddress')}</div><div class="a">${fields.officeAddress || '(not answered)'}</div></div>`;
+    html += `<div class="item"><div class="q">${labelFor('coverageAreas')}</div><div class="a">${fields.coverageAreas || '(not answered)'}</div></div>`;
+
+    html += '<h2>6. Company History</h2>';
+    html += `<div class="item"><div class="q">${labelFor('sinceWhen')}</div><div class="a">${fields.sinceWhen || '(not answered)'}</div></div>`;
+    html += `<div class="item"><div class="q">${labelFor('expertise')}</div><div class="a">${fields.expertise || '(not answered)'}</div></div>`;
+    html += `<div class="item"><div class="q">${labelFor('aboutUs')}</div><div class="a">${fields.aboutUs || '(not answered)'}</div></div>`;
+
+    html += '</body></html>';
+
+    const blob = new Blob([html], {type:'text/html'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'CherServices_KennyReid_Answers_' + new Date().toISOString().slice(0,10) + '.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  restoreFields();
+})();
+</script>
+</body>
+</html>
